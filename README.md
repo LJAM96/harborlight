@@ -1,6 +1,6 @@
-# image-template
+# Haborlight
 
-This repository is meant to be a template for building your own custom [bootc](https://github.com/bootc-dev/bootc) image. This template is the recommended way to make customizations to any image published by the Universal Blue Project.
+Haborlight is a custom bootc operating system image based on Bluefin Nvidia, featuring LibreWolf browser, dual container engine support (Docker & Podman), and enhanced development tools.
 
 # Community
 
@@ -116,7 +116,7 @@ Once pushed, go look at the Actions tab on your Github repository's page.  The g
 
 From your bootc system, run the following command substituting in your Github username and image name where noted.
 ```bash
-sudo bootc switch ghcr.io/<username>/<image_name>
+sudo bootc switch ghcr.io/LJAM96/haborlight:latest
 ```
 This should queue your image for the next reboot, which you can do immediately after the command finishes. You have officially set up your custom image! See the following section for an explanation of the important parts of the template for customization.
 
@@ -173,7 +173,7 @@ To use it, you must have installed [just](https://just.systems/man/en/introducti
 
 ## Environment Variables
 
-- `image_name`: The name of the image (default: "image-template").
+- `image_name`: The name of the image (default: "haborlight").
 - `default_tag`: The default tag for the image (default: "latest").
 - `bib_image`: The Bootc Image Builder (BIB) image (default: "quay.io/centos-bootc/bootc-image-builder:latest").
 
