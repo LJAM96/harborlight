@@ -44,3 +44,12 @@ groupadd -f docker
 
 # Ensure podman and docker can coexist
 # Podman is already included in Bluefin, just enabling services
+
+### Install Haborlight Branding
+# Replace all Bluefin branding with Haborlight branding
+/ctx/branding/install-branding.sh
+
+### Install and Enable libldm Service
+# Install libldm systemd service for Local Data Manager
+cp /ctx/services/libldm.service /etc/systemd/system/
+systemctl enable libldm.service

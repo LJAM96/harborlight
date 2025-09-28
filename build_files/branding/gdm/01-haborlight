@@ -1,0 +1,6 @@
+[org/gnome/login-screen]
+logo='/usr/share/pixmaps/haborlight-logo.png'
+
+[org/gnome/desktop/interface]
+gtk-theme='Adwaita'
+cursor-theme='Adwaita'

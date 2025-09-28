@@ -1,0 +1,21 @@
+[Unit]
+Description=Local Data Manager (libldm)
+Documentation=man:ldmtool(8)
+After=local-fs-pre.target
+Before=local-fs.target
+DefaultDependencies=no
+Conflicts=shutdown.target
+Before=shutdown.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+User=root
+ExecStart=/usr/bin/ldmtool create all
+ExecReload=/usr/bin/ldmtool scan
+TimeoutSec=30
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=local-fs.target

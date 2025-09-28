@@ -1,0 +1,86 @@
+# Haborlight Plymouth Theme Script
+
+# Screen and window setup
+screen_width = Window.GetWidth();
+screen_height = Window.GetHeight();
+Window.SetBackgroundTopColor(0.05, 0.05, 0.1);     # Dark blue background
+Window.SetBackgroundBottomColor(0.1, 0.1, 0.2);    # Slightly lighter blue
+
+# Load and display logo
+logo.image = Image("logo.png");
+logo.sprite = Sprite(logo.image);
+logo.width = logo.image.GetWidth();
+logo.height = logo.image.GetHeight();
+
+# Center the logo
+logo.x = (screen_width - logo.width) / 2;
+logo.y = (screen_height - logo.height) / 2 - 50;
+logo.sprite.SetPosition(logo.x, logo.y, 10);
+
+# Progress bar setup
+progress_box.image = Image.Text("", 1, 1, 1);
+progress_box.sprite = Sprite(progress_box.image);
+
+progress_bar.original_image = Image("progress_bar.png");
+progress_bar.sprite = Sprite();
+progress_bar.x = (screen_width - progress_bar.original_image.GetWidth()) / 2;
+progress_bar.y = logo.y + logo.height + 50;
+progress_bar.sprite.SetPosition(progress_bar.x, progress_bar.y, 1);
+
+# Text setup for messages
+message_sprite = Sprite();
+message_sprite.SetPosition(screen_width / 2, progress_bar.y + 50, 10);
+
+# Boot progress function
+fun boot_progress_cb(duration, progress) {
+    if (progress_bar.original_image) {
+        progress_bar.image = progress_bar.original_image.Scale(progress_bar.original_image.GetWidth() * progress, progress_bar.original_image.GetHeight());
+        progress_bar.sprite.SetImage(progress_bar.image);
+    }
+}
+
+Plymouth.SetBootProgressFunction(boot_progress_cb);
+
+# Display message function
+fun display_normal_callback() {
+    global.status = "normal";
+    if (global.message_text) {
+        message_image = Image.Text(global.message_text, 1, 1, 1);
+        message_sprite.SetImage(message_image);
+    }
+}
+
+fun display_password_callback(prompt, bullets) {
+    global.status = "password";
+    if (prompt) {
+        prompt_image = Image.Text(prompt, 1, 1, 1);
+        prompt_sprite.SetImage(prompt_image);
+    }
+}
+
+fun display_question_callback(prompt, entry) {
+    global.status = "question";
+    if (prompt) {
+        question_image = Image.Text(prompt, 1, 1, 1);
+        message_sprite.SetImage(question_image);
+    }
+}
+
+fun display_message_callback(text) {
+    global.message_text = text;
+    if (global.status == "normal") {
+        display_normal_callback();
+    }
+}
+
+Plymouth.SetDisplayNormalFunction(display_normal_callback);
+Plymouth.SetDisplayPasswordFunction(display_password_callback);
+Plymouth.SetDisplayQuestionFunction(display_question_callback);
+Plymouth.SetDisplayMessageFunction(display_message_callback);
+
+# Refresh function
+fun refresh_callback() {
+    # Keep elements visible
+}
+
+Plymouth.SetRefreshFunction(refresh_callback);
