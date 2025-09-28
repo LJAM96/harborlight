@@ -13,8 +13,18 @@ cp /ctx/branding/plymouth/haborlight.script /usr/share/plymouth/themes/haborligh
 cp /ctx/branding/plymouth/logo.png /usr/share/plymouth/themes/haborlight/
 cp /ctx/branding/plymouth/progress_bar.png /usr/share/plymouth/themes/haborlight/
 
-# Set Plymouth theme
-plymouth-set-default-theme haborlight
+# Set Plymouth theme with error handling
+echo "Setting Plymouth theme to Haborlight..."
+if plymouth-set-default-theme haborlight 2>/dev/null; then
+    echo "✓ Plymouth theme set successfully"
+else
+    echo "⚠ Warning: Could not set Plymouth theme, checking script module..."
+    if [ ! -f "/usr/lib64/plymouth/script.so" ]; then
+        echo "✗ Plymouth script module missing, theme may not work properly"
+    else
+        echo "? Plymouth theme setting failed for unknown reason"
+    fi
+fi
 
 # Update system identification
 cp /ctx/branding/os-release /etc/os-release
@@ -95,7 +105,11 @@ rm -rf /usr/share/plymouth/themes/bluefin* || true
 rm -rf /usr/share/plymouth/themes/spinner || true
 
 # Rebuild Plymouth initrd
-plymouth-set-default-theme haborlight
-dracut -f
+echo "Rebuilding Plymouth initrd..."
+if dracut -f 2>/dev/null; then
+    echo "✓ Plymouth initrd rebuilt successfully"
+else
+    echo "⚠ Warning: Could not rebuild Plymouth initrd"
+fi
 
 echo "Haborlight branding installation complete!"

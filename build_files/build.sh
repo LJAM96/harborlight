@@ -23,6 +23,9 @@ dnf5 install -y tmux
 # Install libldm and Docker
 dnf5 install -y libldm docker docker-compose
 
+# Install Plymouth scripts for custom themes
+dnf5 install -y plymouth-scripts
+
 # Use a COPR Example:
 #
 # dnf5 -y copr enable ublue-os/staging
@@ -51,5 +54,14 @@ groupadd -f docker
 
 ### Install and Enable libldm Service
 # Install libldm systemd service for Local Data Manager
-cp /ctx/services/libldm.service /etc/systemd/system/
-systemctl enable libldm.service
+echo "Installing libldm service..."
+if cp /ctx/services/libldm.service /etc/systemd/system/; then
+    echo "✓ libldm service file installed"
+    if systemctl enable libldm.service; then
+        echo "✓ libldm service enabled"
+    else
+        echo "⚠ Warning: Could not enable libldm service"
+    fi
+else
+    echo "✗ Error: Could not install libldm service file"
+fi
