@@ -73,7 +73,7 @@ EOF
 # Update motd
 cat > /etc/motd << EOF
 
-Welcome to Haborlight!
+Welcome to Harborlight!
 
 A custom bootc operating system based on Bluefin Nvidia
 featuring LibreWolf browser and dual container support.
