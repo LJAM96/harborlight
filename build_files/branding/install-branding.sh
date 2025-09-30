@@ -71,12 +71,20 @@ Harborlight
 EOF
 
 # Update motd
-cat > /etc/motd << EOF
+cat /ctx/branding/logo_ascii.txt > /etc/motd
+cat >> /etc/motd << EOF
 
-Welcome to Harborlight!
+  ╔══════════════════════════════════════════════════════════════════════════╗
+  ║                        Welcome to Harborlight!                           ║
+  ╚══════════════════════════════════════════════════════════════════════════╝
 
-A custom bootc operating system based on Bluefin Nvidia
-featuring LibreWolf browser and dual container support.
+  A custom bootc operating system based on Bluefin Nvidia
+  • LibreWolf browser for enhanced privacy
+  • Docker & Podman dual container engine support
+  • Enhanced development tools
+
+  Documentation: https://github.com/LJAM96/harborlight
+  Report issues: https://github.com/LJAM96/harborlight/issues
 
 EOF
 
