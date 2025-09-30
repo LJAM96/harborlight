@@ -2,20 +2,20 @@
 
 set -ouex pipefail
 
-echo "Installing Haborlight branding..."
+echo "Installing Harborlight branding..."
 
 # Create Plymouth theme directory
-mkdir -p /usr/share/plymouth/themes/haborlight
+mkdir -p /usr/share/plymouth/themes/harborlight
 
 # Install Plymouth theme files
-cp /ctx/branding/plymouth/haborlight.plymouth /usr/share/plymouth/themes/haborlight/
-cp /ctx/branding/plymouth/haborlight.script /usr/share/plymouth/themes/haborlight/
-cp /ctx/branding/plymouth/logo.png /usr/share/plymouth/themes/haborlight/
-cp /ctx/branding/plymouth/progress_bar.png /usr/share/plymouth/themes/haborlight/
+cp /ctx/branding/plymouth/harborlight.plymouth /usr/share/plymouth/themes/harborlight/
+cp /ctx/branding/plymouth/harborlight.script /usr/share/plymouth/themes/harborlight/
+cp /ctx/branding/plymouth/logo.png /usr/share/plymouth/themes/harborlight/
+cp /ctx/branding/plymouth/progress_bar.png /usr/share/plymouth/themes/harborlight/
 
 # Set Plymouth theme with error handling
-echo "Setting Plymouth theme to Haborlight..."
-if plymouth-set-default-theme haborlight 2>/dev/null; then
+echo "Setting Plymouth theme to Harborlight..."
+if plymouth-set-default-theme harborlight 2>/dev/null; then
     echo "✓ Plymouth theme set successfully"
 else
     echo "⚠ Warning: Could not set Plymouth theme, checking script module..."
@@ -32,8 +32,8 @@ cp /ctx/branding/os-release /usr/lib/os-release
 
 # Install system logos
 mkdir -p /usr/share/pixmaps
-cp /ctx/branding/logos/logo.png /usr/share/pixmaps/haborlight-logo.png
-cp /ctx/branding/logos/logo.svg /usr/share/pixmaps/haborlight-logo.svg
+cp /ctx/branding/logos/logo.png /usr/share/pixmaps/harborlight-logo.png
+cp /ctx/branding/logos/logo.svg /usr/share/pixmaps/harborlight-logo.svg
 
 # Install Anaconda branding (for ISO installer)
 mkdir -p /usr/share/anaconda/pixmaps
@@ -45,28 +45,28 @@ rm -f /usr/share/pixmaps/bluefin* || true
 rm -f /usr/share/anaconda/pixmaps/sidebar-bg.png || true
 
 # Create desktop file for system info
-cat > /usr/share/applications/haborlight-info.desktop << EOF
+cat > /usr/share/applications/harborlight-info.desktop << EOF
 [Desktop Entry]
-Name=Haborlight System Info
-Comment=Haborlight Operating System Information
+Name=Harborlight System Info
+Comment=Harborlight Operating System Information
 Exec=gnome-control-center info
-Icon=haborlight-logo
+Icon=harborlight-logo
 Type=Application
 Categories=System;
 NoDisplay=true
 EOF
 
 # Update hostname configuration
-echo "haborlight" > /etc/hostname
+echo "harborlight" > /etc/hostname
 
 # Create issue files for login screen
 cat > /etc/issue << EOF
-Haborlight \\r (\\l)
+Harborlight \\r (\\l)
 
 EOF
 
 cat > /etc/issue.net << EOF
-Haborlight
+Harborlight
 
 EOF
 
@@ -92,12 +92,12 @@ gsettings reset org.gnome.desktop.background picture-uri-dark || true
 
 # Configure GDM branding
 mkdir -p /etc/dconf/db/gdm.d
-cp /ctx/branding/gdm/01-haborlight /etc/dconf/db/gdm.d/
+cp /ctx/branding/gdm/01-harborlight /etc/dconf/db/gdm.d/
 dconf update
 
 # Configure SDDM branding (if present)
 if [ -d "/etc/sddm.conf.d" ]; then
-    cp /ctx/branding/sddm/haborlight.conf /etc/sddm.conf.d/
+    cp /ctx/branding/sddm/harborlight.conf /etc/sddm.conf.d/
 fi
 
 # Remove existing Plymouth themes that might conflict
@@ -112,4 +112,4 @@ else
     echo "⚠ Warning: Could not rebuild Plymouth initrd"
 fi
 
-echo "Haborlight branding installation complete!"
+echo "Harborlight branding installation complete!"

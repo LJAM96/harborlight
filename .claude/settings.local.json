@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git commit -m \"$(cat <<''EOF''\nFix branding: use default GNOME wallpaper and correct name to Harborlight\n\n- Remove custom logo from GDM login screen to use default GNOME wallpaper\n- Fix typo: rename \"Haborlight\" to \"Harborlight\" in os-release and MOTD\n- Update system name across all branding files for consistency\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push:*)",
+      "Bash(cp:*)",
+      "Bash(convert:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(mv:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

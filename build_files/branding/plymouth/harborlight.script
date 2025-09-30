@@ -1,4 +1,4 @@
-# Haborlight Plymouth Theme Script
+# Harborlight Plymouth Theme Script
 
 # Screen and window setup
 screen_width = Window.GetWidth();
