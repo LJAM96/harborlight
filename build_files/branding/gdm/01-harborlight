@@ -1,3 +1,4 @@
 [org/gnome/desktop/interface]
 gtk-theme='Adwaita'
 cursor-theme='Adwaita'
+icon-theme='Fluent'

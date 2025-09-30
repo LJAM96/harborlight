@@ -88,6 +88,22 @@ cat >> /etc/motd << EOF
 
 EOF
 
+# Install Fluent icon theme
+echo "Installing Fluent icon theme..."
+cd /tmp
+if git clone --depth=1 https://github.com/vinceliuice/Fluent-icon-theme.git 2>/dev/null; then
+    cd Fluent-icon-theme
+    if ./install.sh -d /usr/share/icons; then
+        echo "✓ Fluent icon theme installed"
+    else
+        echo "⚠ Warning: Fluent icon theme installation failed, falling back to Adwaita"
+    fi
+    cd /tmp
+    rm -rf Fluent-icon-theme
+else
+    echo "⚠ Warning: Could not clone Fluent icon theme repository, falling back to Adwaita"
+fi
+
 # Remove Bluefin wallpapers and restore GNOME defaults
 rm -rf /usr/share/backgrounds/bluefin* || true
 rm -rf /usr/share/backgrounds/ublue* || true
@@ -101,6 +117,14 @@ gsettings reset org.gnome.desktop.background picture-uri-dark || true
 # Configure GDM branding
 mkdir -p /etc/dconf/db/gdm.d
 cp /ctx/branding/gdm/01-harborlight /etc/dconf/db/gdm.d/
+dconf update
+
+# Configure user defaults for icon theme
+mkdir -p /etc/dconf/db/local.d
+cat > /etc/dconf/db/local.d/01-harborlight-defaults << EOF
+[org/gnome/desktop/interface]
+icon-theme='Fluent'
+EOF
 dconf update
 
 # Configure SDDM branding (if present)
