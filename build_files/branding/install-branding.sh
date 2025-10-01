@@ -44,6 +44,15 @@ cp /ctx/branding/logos/logo.png /usr/share/anaconda/pixmaps/topbar-logo.png
 rm -f /usr/share/pixmaps/bluefin* || true
 rm -f /usr/share/anaconda/pixmaps/sidebar-bg.png || true
 
+# Remove additional Bluefin logos that might appear in About page
+rm -f /usr/share/pixmaps/fedora-logo* || true
+rm -f /usr/share/pixmaps/system-logo-white.png || true
+rm -f /etc/fedora-release || true
+
+# Override any vendor logos
+ln -sf /usr/share/pixmaps/harborlight-logo.png /usr/share/pixmaps/fedora-logo.png || true
+ln -sf /usr/share/pixmaps/harborlight-logo.png /usr/share/pixmaps/system-logo-white.png || true
+
 # Create desktop file for system info
 cat > /usr/share/applications/harborlight-info.desktop << EOF
 [Desktop Entry]
@@ -72,7 +81,7 @@ EOF
 
 # Update motd
 cat /ctx/branding/logo_ascii.txt > /etc/motd
-cat >> /etc/motd << EOF
+cat >> /etc/motd << 'EOF'
 
   ╔══════════════════════════════════════════════════════════════════════════╗
   ║                        Welcome to Harborlight!                           ║
@@ -87,6 +96,19 @@ cat >> /etc/motd << EOF
   Report issues: https://github.com/LJAM96/harborlight/issues
 
 EOF
+
+# Ensure MOTD is displayed in shell sessions
+mkdir -p /etc/profile.d
+cat > /etc/profile.d/harborlight-motd.sh << 'EOF'
+# Display MOTD for interactive shells
+if [ -f /etc/motd ] && [ -n "$PS1" ]; then
+    cat /etc/motd
+fi
+EOF
+chmod +x /etc/profile.d/harborlight-motd.sh
+
+# Remove any Bluefin MOTD scripts
+rm -f /etc/profile.d/bluefin* || true
 
 # Install Fluent icon theme
 echo "Installing Fluent icon theme..."
@@ -109,6 +131,10 @@ rm -rf /usr/share/backgrounds/bluefin* || true
 rm -rf /usr/share/backgrounds/ublue* || true
 rm -rf /usr/share/gnome-background-properties/bluefin* || true
 rm -rf /usr/share/gnome-background-properties/ublue* || true
+
+# Remove any Bluefin GDM backgrounds
+rm -f /usr/share/backgrounds/default.png || true
+rm -f /usr/share/backgrounds/default.jpg || true
 
 # Reset wallpaper settings to GNOME defaults
 gsettings reset org.gnome.desktop.background picture-uri || true
