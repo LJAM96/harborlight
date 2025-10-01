@@ -136,20 +136,29 @@ rm -rf /usr/share/gnome-background-properties/ublue* || true
 rm -f /usr/share/backgrounds/default.png || true
 rm -f /usr/share/backgrounds/default.jpg || true
 
-# Reset wallpaper settings to GNOME defaults
-gsettings reset org.gnome.desktop.background picture-uri || true
-gsettings reset org.gnome.desktop.background picture-uri-dark || true
+# Ensure GNOME default wallpapers exist, if not available use fallback
+if [ ! -f /usr/share/backgrounds/gnome/adwaita-l.jxl ]; then
+    # Fallback to older GNOME wallpapers if new ones don't exist
+    ln -sf /usr/share/backgrounds/gnome/adwaita-timed.xml /usr/share/backgrounds/default.xml || true
+fi
 
 # Configure GDM branding
 mkdir -p /etc/dconf/db/gdm.d
 cp /ctx/branding/gdm/01-harborlight /etc/dconf/db/gdm.d/
 dconf update
 
-# Configure user defaults for icon theme
+# Configure user defaults for icon theme and wallpaper
 mkdir -p /etc/dconf/db/local.d
 cat > /etc/dconf/db/local.d/01-harborlight-defaults << EOF
 [org/gnome/desktop/interface]
 icon-theme='Fluent'
+
+[org/gnome/desktop/background]
+picture-uri='file:///usr/share/backgrounds/gnome/adwaita-l.jxl'
+picture-uri-dark='file:///usr/share/backgrounds/gnome/adwaita-d.jxl'
+picture-options='zoom'
+primary-color='#3465a4'
+secondary-color='#000000'
 EOF
 dconf update
 
