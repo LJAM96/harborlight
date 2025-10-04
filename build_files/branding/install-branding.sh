@@ -164,7 +164,7 @@ dconf update
 
 # Configure SDDM branding (if present)
 if [ -d "/etc/sddm.conf.d" ]; then
-    cp /ctx/branding/sddm/harborlight.conf /etc/sddm.conf.d/
+    cp /ctx/branding/sddm/harborlight.conf /etc/sddm.conf.d/harborlight.conf
 fi
 
 # Remove existing Plymouth themes that might conflict
