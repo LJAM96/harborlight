@@ -12,6 +12,25 @@ set -ouex pipefail
 # this installs a package from fedora repos
 dnf5 install -y tmux libldm docker freerdp
 
+# Remove Firefox and Thunderbird flatpaks, install LibreWolf
+flatpak remove -y org.mozilla.firefox org.mozilla.Thunderbird || true
+flatpak install -y flathub io.gitlab.librewolf-community
+
+### Install Fluent icon theme
+# Try to clone and install from GitHub, with fallback if unavailable
+ICON_THEME_URL="https://github.com/vinceliuice/Fluent-icon-theme.git"
+ICON_THEME_DIR="/tmp/fluent-icon-theme"
+
+if git clone --depth 1 "$ICON_THEME_URL" "$ICON_THEME_DIR" 2>/dev/null; then
+    echo "Installing Fluent icon theme from GitHub..."
+    cd "$ICON_THEME_DIR"
+    ./install.sh -a || echo "Warning: Fluent icon theme installation encountered issues"
+    cd -
+    rm -rf "$ICON_THEME_DIR"
+else
+    echo "Warning: Could not clone Fluent icon theme from GitHub. Keeping default icons."
+fi
+
 # Use a COPR Example:
 #
 # dnf5 -y copr enable ublue-os/staging
