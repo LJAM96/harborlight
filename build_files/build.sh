@@ -10,7 +10,21 @@ set -ouex pipefail
 # https://mirrors.rpmfusion.org/mirrorlist?path=free/fedora/updates/39/x86_64/repoview/index.html&protocol=https&redirect=1
 
 # this installs packages from fedora repos
-dnf5 install -y tmux git
+dnf5 install -y \
+    tmux \
+    git \
+    libldm \
+    docker \
+    virt-install \
+    libvirt-daemon-config-network \
+    libvirt-daemon-kvm \
+    qemu-kvm \
+    virt-manager \
+    virt-viewer \
+    libguestfs-tools \
+    python3-libguestfs \
+    virt-top \
+    freerdp
 
 ### Install Fluent icon theme system-wide
 
@@ -54,3 +68,24 @@ dconf update
 #### Example for enabling a System Unit File
 
 systemctl enable podman.socket
+systemctl enable docker
+systemctl enable libvirtd
+
+### Local Data Manager service
+
+cat <<'EOF' > /etc/systemd/system/ldm.service
+[Unit]
+Description=Local Data Manager
+Before=local-fs-pre.target
+
+[Service]
+Type=forking
+User=root
+ExecStart=/usr/bin/ldmtool create all
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl enable ldm.service
