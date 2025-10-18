@@ -15,7 +15,7 @@ dnf5 install -y \
     git \
     libldm \
     moby-engine \
-    docker-compose-plugin \
+    moby-compose \
     virt-install \
     libvirt-daemon-config-network \
     libvirt-daemon-kvm \
@@ -91,3 +91,46 @@ WantedBy=multi-user.target
 EOF
 
 systemctl enable ldm.service
+
+### Ensure newly created users can access Docker
+
+cat <<'EOF' > /usr/local/sbin/add-docker-group.sh
+#!/bin/bash
+set -euo pipefail
+
+awk -F: '$3 >= 1000 && $1 != "nobody" {print $1}' /etc/passwd | while read -r username; do
+    if ! id -nG "${username}" | grep -qw docker; then
+        usermod -aG docker "${username}"
+    fi
+done
+EOF
+
+chmod 0755 /usr/local/sbin/add-docker-group.sh
+
+cat <<'EOF' > /etc/systemd/system/docker-user-group.service
+[Unit]
+Description=Ensure all users belong to the docker group
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/add-docker-group.sh
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+cat <<'EOF' > /etc/systemd/system/docker-user-group.path
+[Unit]
+Description=Watch for new users to add them to the docker group
+
+[Path]
+PathChanged=/etc/passwd
+Unit=docker-user-group.service
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl enable docker-user-group.service
+systemctl enable docker-user-group.path
