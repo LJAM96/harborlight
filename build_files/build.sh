@@ -108,7 +108,10 @@ systemctl enable ldm.service
 
 ### Ensure newly created users can access Docker
 
-if ! mkdir -p /usr/local/sbin 2>/dev/null; then
+if [[ -L /usr/local ]]; then
+    resolved_local="$(readlink -f /usr/local)"
+    mkdir -p "${resolved_local}/sbin"
+elif ! mkdir -p /usr/local/sbin 2>/dev/null; then
     if [[ ! -d /usr/local/sbin ]]; then
         echo "Failed to ensure /usr/local/sbin exists" >&2
         exit 1
