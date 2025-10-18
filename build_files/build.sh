@@ -108,6 +108,7 @@ systemctl enable ldm.service
 
 ### Ensure newly created users can access Docker
 
+mkdir -p /usr/local/sbin
 cat <<'EOF' > /usr/local/sbin/add-docker-group.sh
 #!/bin/bash
 set -euo pipefail
