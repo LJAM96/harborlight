@@ -108,7 +108,12 @@ systemctl enable ldm.service
 
 ### Ensure newly created users can access Docker
 
-mkdir -p /usr/local/sbin
+if ! mkdir -p /usr/local/sbin 2>/dev/null; then
+    if [[ ! -d /usr/local/sbin ]]; then
+        echo "Failed to ensure /usr/local/sbin exists" >&2
+        exit 1
+    fi
+fi
 cat <<'EOF' > /usr/local/sbin/add-docker-group.sh
 #!/bin/bash
 set -euo pipefail
