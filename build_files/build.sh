@@ -4,6 +4,13 @@ set -ouex pipefail
 
 ### Install packages
 
+# Ensure COPR plugin and RPM Fusion repositories are available
+dnf5 install -y dnf5-plugins
+fedora_version="$(rpm -E %fedora)"
+dnf5 install -y \
+    "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm" \
+    "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm"
+
 # Packages can be installed from any enabled yum repo on the image.
 # RPMfusion repos are available by default in ublue main images
 # List of rpmfusion packages can be found here:
@@ -15,7 +22,7 @@ dnf5 install -y \
     git \
     libldm \
     moby-engine \
-    moby-compose \
+    docker-compose \
     virt-install \
     libvirt-daemon-config-network \
     libvirt-daemon-kvm \
@@ -25,7 +32,14 @@ dnf5 install -y \
     libguestfs-tools \
     python3-libguestfs \
     virt-top \
-    freerdp
+    freerdp \
+    curl
+
+### Install Docker Compose plugin (CLI v2)
+
+mkdir -p /usr/libexec/docker/cli-plugins
+curl -L "https://github.com/docker/compose/releases/download/v2.29.7/docker-compose-linux-x86_64" -o /usr/libexec/docker/cli-plugins/docker-compose
+chmod +x /usr/libexec/docker/cli-plugins/docker-compose
 
 ### Install Fluent icon theme system-wide
 
