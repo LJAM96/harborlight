@@ -14,7 +14,8 @@ dnf5 install -y \
     tmux \
     git \
     libldm \
-    docker \
+    moby-engine \
+    docker-compose-plugin \
     virt-install \
     libvirt-daemon-config-network \
     libvirt-daemon-kvm \
@@ -68,7 +69,8 @@ dconf update
 #### Example for enabling a System Unit File
 
 systemctl enable podman.socket
-systemctl enable docker
+systemctl enable docker.service
+systemctl enable docker.socket
 systemctl enable libvirtd
 
 ### Local Data Manager service
