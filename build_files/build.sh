@@ -35,6 +35,17 @@ dnf5 install -y \
     freerdp \
     curl
 
+### Remove unwanted RPM packages
+
+dnf5 remove -y gnome-shell-extension-logo-menu || true
+
+### Manage Flatpak applications
+
+flatpak remote-add --if-not-exists --system flathub https://flathub.org/repo/flathub.flatpakrepo
+flatpak uninstall --noninteractive --system org.mozilla.firefox || true
+flatpak uninstall --noninteractive --system org.mozilla.Thunderbird || true
+flatpak install --noninteractive --system flathub io.gitlab.librewolf-community
+
 ### Install Docker Compose plugin (CLI v2)
 
 mkdir -p /usr/libexec/docker/cli-plugins
