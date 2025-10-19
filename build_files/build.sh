@@ -33,7 +33,24 @@ dnf5 install -y \
     python3-libguestfs \
     virt-top \
     freerdp \
-    curl
+    curl \
+    tailscale \
+    toolbox \
+    ublue-bling \
+    ublue-fastfetch \
+    ublue-motd \
+    ublue-brew \
+    ublue-os-akmods-addons \
+    ublue-os-flatpak \
+    ublue-os-just \
+    ublue-os-luks \
+    ublue-os-signing \
+    ublue-os-udev-rules \
+    ublue-os-update-services \
+    ublue-polkit-rules \
+    ublue-setup-services \
+    bazaar \
+    distrobox
 
 ### Remove unwanted RPM packages
 
@@ -99,7 +116,7 @@ EOF
 fi
 
 mkdir -p /etc/dconf/db/local.d
-cat <<'EOF' > /etc/dconf/db/local.d/00-harborlight-theme
+cat <<'EOF' > /etc/dconf/db/local.d/00-harborlight-arm-theme
 [org/gnome/desktop/interface]
 icon-theme='Fluent'
 EOF
@@ -141,9 +158,9 @@ systemctl enable ldm.service
 
 ### Ensure newly created users can access Docker
 
-install -d /usr/libexec/harborlight
+install -d /usr/libexec/harborlight-arm
 
-cat <<'EOF' > /usr/libexec/harborlight/add-docker-group.sh
+cat <<'EOF' > /usr/libexec/harborlight-arm/add-docker-group.sh
 #!/bin/bash
 set -euo pipefail
 
@@ -154,7 +171,7 @@ awk -F: '$3 >= 1000 && $1 != "nobody" {print $1}' /etc/passwd | while read -r us
 done
 EOF
 
-chmod 0755 /usr/libexec/harborlight/add-docker-group.sh
+chmod 0755 /usr/libexec/harborlight-arm/add-docker-group.sh
 
 cat <<'EOF' > /etc/systemd/system/docker-user-group.service
 [Unit]
@@ -163,7 +180,7 @@ After=network.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/libexec/harborlight/add-docker-group.sh
+ExecStart=/usr/libexec/harborlight-arm/add-docker-group.sh
 
 [Install]
 WantedBy=multi-user.target
