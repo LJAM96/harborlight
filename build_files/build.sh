@@ -37,7 +37,15 @@ dnf5 install -y \
 
 ### Remove unwanted RPM packages
 
-dnf5 remove -y gnome-shell-extension-logo-menu || true
+dnf5 remove -y \
+    gnome-shell-extension-logo-menu \
+    bluefin-backgrounds \
+    bluefin-cli-logos \
+    bluefin-faces \
+    bluefin-fastfetch \
+    bluefin-logos \
+    bluefin-plymouth \
+    bluefin-schemas || true
 
 ### Manage Flatpak applications
 
