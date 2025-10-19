@@ -47,6 +47,27 @@ dnf5 remove -y \
     bluefin-plymouth \
     bluefin-schemas || true
 
+### Apply Harborlight branding assets
+
+if [[ -d /ctx/branding ]]; then
+    find /ctx/branding -name '.DS_Store' -delete
+
+    if [[ -d /ctx/branding/usr/share ]]; then
+        cp -a /ctx/branding/usr/share/. /usr/share/
+    fi
+
+    if [[ -d /ctx/branding/usr/lib/systemd/system ]]; then
+        for unit in /ctx/branding/usr/lib/systemd/system/*.service; do
+            [[ -f "${unit}" ]] || continue
+            if grep -q '^\[Unit\]' "${unit}"; then
+                cp -a "${unit}" /usr/lib/systemd/system/
+            else
+                echo "Skipping invalid systemd unit template: ${unit}" >&2
+            fi
+        done
+    fi
+fi
+
 ### Manage Flatpak applications
 
 flatpak remote-add --if-not-exists --system flathub https://flathub.org/repo/flathub.flatpakrepo
