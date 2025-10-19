@@ -18,8 +18,10 @@ env:
   IMAGE_DESC: "My Customized Universal Blue Image"
   IMAGE_KEYWORDS: "bootc,ublue,universal-blue"
   IMAGE_LOGO_URL: "https://avatars.githubusercontent.com/u/120078124?s=200&v=4"  # Put your own image here for a fancy profile on https://artifacthub.io/!
-  IMAGE_NAME: ${{ github.ref_type == 'branch' && github.ref_name != github.event.repository.default_branch && format('{0}-{1}', github.event.repository.name, replace(github.ref_name, '/', '-')) || github.event.repository.name }}  # output image name, usually same as repo name
+  IMAGE_NAME_BASE: ${{ github.event.repository.name }}  # base image name, usually same as repo name
+  IMAGE_NAME: ${{ github.event.repository.name }}  # runtime value is set in Prepare environment step
   IMAGE_REGISTRY: "ghcr.io/${{ github.repository_owner }}"  # do not edit
+  DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
   DEFAULT_TAG: "latest"
   PUBLISH_BRANCHES_JSON: '["main","arm","f43"]'
 
@@ -40,9 +42,14 @@ jobs:
     steps:
       - name: Prepare environment
         run: |
-          # Lowercase the image uri
-          echo "IMAGE_REGISTRY=${IMAGE_REGISTRY,,}" >> ${GITHUB_ENV}
-          echo "IMAGE_NAME=${IMAGE_NAME,,}" >> ${GITHUB_ENV}
+          # Derive a unique image name per branch and lowercase registry/name
+          IMAGE_NAME_BRANCH="${IMAGE_NAME_BASE}"
+          if [[ "${GITHUB_REF_TYPE}" == "branch" && "${GITHUB_REF_NAME}" != "${DEFAULT_BRANCH}" ]]; then
+            BRANCH_SLUG="${GITHUB_REF_NAME//\//-}"
+            IMAGE_NAME_BRANCH="${IMAGE_NAME_BASE}-${BRANCH_SLUG}"
+          fi
+          echo "IMAGE_REGISTRY=${IMAGE_REGISTRY,,}" >> "${GITHUB_ENV}"
+          echo "IMAGE_NAME=${IMAGE_NAME_BRANCH,,}" >> "${GITHUB_ENV}"
 
       # These stage versions are pinned by https://github.com/renovatebot/renovate
       - name: Checkout
