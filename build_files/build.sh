@@ -68,12 +68,48 @@ if [[ -d /ctx/branding ]]; then
     fi
 fi
 
-### Manage Flatpak applications
+### Configure Flatpak applications for first boot
+
+install -d /usr/libexec/harborlight
+
+cat <<'EOF' > /usr/libexec/harborlight/install-flatpaks.sh
+#!/usr/bin/env bash
+set -euo pipefail
+
+FLAG_DIR="/var/lib/harborlight"
+FLAG_FILE="${FLAG_DIR}/flatpak-setup.done"
+
+if [[ -f "${FLAG_FILE}" ]]; then
+    exit 0
+fi
+
+install -d -m 0755 "${FLAG_DIR}"
 
 flatpak remote-add --if-not-exists --system flathub https://flathub.org/repo/flathub.flatpakrepo
 flatpak uninstall --noninteractive --system org.mozilla.firefox || true
 flatpak uninstall --noninteractive --system org.mozilla.Thunderbird || true
 flatpak install --noninteractive --system flathub io.gitlab.librewolf-community
+
+touch "${FLAG_FILE}"
+EOF
+
+chmod 0755 /usr/libexec/harborlight/install-flatpaks.sh
+
+cat <<'EOF' > /usr/lib/systemd/system/harborlight-flatpak-setup.service
+[Unit]
+Description=Install Harborlight Flatpaks
+After=network-online.target systemd-udevd.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/harborlight/install-flatpaks.sh
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl enable harborlight-flatpak-setup.service
 
 ### Install Docker Compose plugin (CLI v2)
 
@@ -148,16 +184,7 @@ systemctl enable ldm.service
 
 ### Ensure newly created users can access Docker
 
-if [[ -L /usr/local ]]; then
-    resolved_local="$(readlink -f /usr/local)"
-    mkdir -p "${resolved_local}/sbin"
-elif ! mkdir -p /usr/local/sbin 2>/dev/null; then
-    if [[ ! -d /usr/local/sbin ]]; then
-        echo "Failed to ensure /usr/local/sbin exists" >&2
-        exit 1
-    fi
-fi
-cat <<'EOF' > /usr/local/sbin/add-docker-group.sh
+cat <<'EOF' > /usr/libexec/harborlight/add-docker-group.sh
 #!/bin/bash
 set -euo pipefail
 
@@ -168,7 +195,7 @@ awk -F: '$3 >= 1000 && $1 != "nobody" {print $1}' /etc/passwd | while read -r us
 done
 EOF
 
-chmod 0755 /usr/local/sbin/add-docker-group.sh
+chmod 0755 /usr/libexec/harborlight/add-docker-group.sh
 
 cat <<'EOF' > /etc/systemd/system/docker-user-group.service
 [Unit]
@@ -177,7 +204,7 @@ After=network.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/sbin/add-docker-group.sh
+ExecStart=/usr/libexec/harborlight/add-docker-group.sh
 
 [Install]
 WantedBy=multi-user.target
