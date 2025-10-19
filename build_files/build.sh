@@ -68,49 +68,6 @@ if [[ -d /ctx/branding ]]; then
     fi
 fi
 
-### Configure Flatpak applications for first boot
-
-install -d /usr/libexec/harborlight
-
-cat <<'EOF' > /usr/libexec/harborlight/install-flatpaks.sh
-#!/usr/bin/env bash
-set -euo pipefail
-
-FLAG_DIR="/var/lib/harborlight"
-FLAG_FILE="${FLAG_DIR}/flatpak-setup.done"
-
-if [[ -f "${FLAG_FILE}" ]]; then
-    exit 0
-fi
-
-install -d -m 0755 "${FLAG_DIR}"
-
-flatpak remote-add --if-not-exists --system flathub https://flathub.org/repo/flathub.flatpakrepo
-flatpak uninstall --noninteractive --system org.mozilla.firefox || true
-flatpak uninstall --noninteractive --system org.mozilla.Thunderbird || true
-flatpak install --noninteractive --system flathub io.gitlab.librewolf-community
-
-touch "${FLAG_FILE}"
-EOF
-
-chmod 0755 /usr/libexec/harborlight/install-flatpaks.sh
-
-cat <<'EOF' > /usr/lib/systemd/system/harborlight-flatpak-setup.service
-[Unit]
-Description=Install Harborlight Flatpaks
-After=network-online.target systemd-udevd.service
-Wants=network-online.target
-
-[Service]
-Type=oneshot
-ExecStart=/usr/libexec/harborlight/install-flatpaks.sh
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-systemctl enable harborlight-flatpak-setup.service
-
 ### Install Docker Compose plugin (CLI v2)
 
 mkdir -p /usr/libexec/docker/cli-plugins
@@ -183,6 +140,8 @@ EOF
 systemctl enable ldm.service
 
 ### Ensure newly created users can access Docker
+
+install -d /usr/libexec/harborlight
 
 cat <<'EOF' > /usr/libexec/harborlight/add-docker-group.sh
 #!/bin/bash
