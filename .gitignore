@@ -2,3 +2,8 @@ cosign.key
 _build_*
 output
 _build-*/**
+branding/usr/share/pixmaps/.DS_Store
+branding/usr/share/.DS_Store
+branding/usr/lib/.DS_Store
+branding/usr/.DS_Store
+.DS_Store
