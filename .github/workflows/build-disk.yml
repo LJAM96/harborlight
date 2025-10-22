@@ -48,6 +48,12 @@ jobs:
       id-token: write
 
     steps:
+      - name: Enforce arm64 platform on arm branch
+        if: github.event_name == 'workflow_dispatch' && github.ref_name == 'arm' && inputs.platform != 'arm64'
+        run: |
+          echo "The arm branch only supports arm64 builds in this workflow." >&2
+          exit 1
+
       - name: Prepare environment
         run: |
           USER_UID=$(id -u)
