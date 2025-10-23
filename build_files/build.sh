@@ -11,6 +11,25 @@ dnf5 install -y \
     "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm" \
     "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm"
 
+# Optional: enable ublue-os repository so ublue-* packages resolve on Fedora base images.
+UBLUE_REPO_BASE="https://download.opensuse.org/repositories/home:/ublue-os/Fedora_${fedora_version}"
+if ! command -v curl >/dev/null 2>&1; then
+    dnf5 install -y curl
+fi
+if curl --silent --fail --head "${UBLUE_REPO_BASE}/repodata/repomd.xml" >/dev/null; then
+    cat <<EOF >/etc/yum.repos.d/ublue-os.repo
+[ublue-os]
+name=ublue-os packages (Fedora ${fedora_version})
+baseurl=${UBLUE_REPO_BASE}/\${basearch}
+enabled=1
+gpgcheck=1
+gpgkey=${UBLUE_REPO_BASE}/repodata/repomd.xml.key
+EOF
+    rpm --import "${UBLUE_REPO_BASE}/repodata/repomd.xml.key" || true
+else
+    echo "ublue-os repository not available for Fedora ${fedora_version}; continuing without it." >&2
+fi
+
 # Packages can be installed from any enabled yum repo on the image.
 # RPMfusion repos are available by default in ublue main images
 # List of rpmfusion packages can be found here:
@@ -33,7 +52,6 @@ dnf5 install -y --skip-unavailable \
     python3-libguestfs \
     virt-top \
     freerdp \
-    curl \
     tailscale \
     toolbox \
     ublue-bling \
@@ -88,7 +106,16 @@ fi
 ### Install Docker Compose plugin (CLI v2)
 
 mkdir -p /usr/libexec/docker/cli-plugins
-curl -L "https://github.com/docker/compose/releases/download/v2.29.7/docker-compose-linux-x86_64" -o /usr/libexec/docker/cli-plugins/docker-compose
+arch="$(uname -m)"
+case "${arch}" in
+    x86_64) compose_arch="x86_64" ;;
+    aarch64|arm64) compose_arch="aarch64" ;;
+    *)
+        echo "Unsupported architecture '${arch}' for Docker Compose binary." >&2
+        exit 1
+        ;;
+esac
+curl -L "https://github.com/docker/compose/releases/download/v2.29.7/docker-compose-linux-${compose_arch}" -o /usr/libexec/docker/cli-plugins/docker-compose
 chmod +x /usr/libexec/docker/cli-plugins/docker-compose
 
 ### Install Fluent icon theme system-wide
