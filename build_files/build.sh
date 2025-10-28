@@ -77,7 +77,7 @@ trap 'rm -rf "${FLUENT_TMP_DIR}"' EXIT
 
 git clone https://github.com/vinceliuice/Fluent-icon-theme.git "${FLUENT_TMP_DIR}/Fluent-icon-theme"
 cd "${FLUENT_TMP_DIR}/Fluent-icon-theme"
-git checkout 20a233d228331283656416355455963995853464
+git checkout c0cc015e2753e7414641a04307056a95fa7ee0f0
 cd -
 
 # Install all variants into /usr/share/icons so they are available system-wide
