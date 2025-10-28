@@ -22,6 +22,7 @@ dnf5 install -y \
     git \
     libldm \
     moby-engine \
+    docker-compose \
     virt-install \
     libvirt-daemon-config-network \
     libvirt-daemon-kvm \
@@ -67,15 +68,7 @@ if [[ -d /ctx/branding ]]; then
     fi
 fi
 
-### Install Docker Compose plugin (CLI v2)
-COMPOSE_VERSION=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r .tag_name)
-mkdir -p /usr/libexec/docker/cli-plugins
-curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-linux-x86_64" -o /usr/libexec/docker/cli-plugins/docker-compose
-curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-linux-x86_64.sha256" -o /usr/libexec/docker/cli-plugins/docker-compose.sha256
-cd /usr/libexec/docker/cli-plugins
-sha256sum -c docker-compose.sha256
-chmod +x /usr/libexec/docker/cli-plugins/docker-compose
-cd -
+
 
 ### Install Fluent icon theme system-wide
 
