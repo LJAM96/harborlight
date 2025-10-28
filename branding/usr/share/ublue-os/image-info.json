@@ -2,8 +2,8 @@
   "image-name": "harborlight",
   "image-flavor": "nvidia",
   "image-vendor": "harborlight",
-  "image-ref": "ostree-image-signed:docker://ghcr.io/harborlight/harborlight",
+  "image-ref": "ostree-image-signed:docker://ghcr.io/LJAM96/harborlight",
   "image-tag": "stable",
-  "base-image-name": "bluefin-nvidia",
-  "fedora-version": "42"
+  "base-image-name": "silverblue",
+  "fedora-version": "43"
 }
