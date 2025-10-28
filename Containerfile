@@ -3,8 +3,7 @@ FROM scratch AS ctx
 COPY build_files /
 
 # Base Image
-ARG BASE_IMAGE=quay.io/fedora-ostree-desktops/silverblue:latest
-FROM ${BASE_IMAGE}
+FROM ##BASE_IMAGE##
 
 ## Other possible base images include:
 # FROM ghcr.io/ublue-os/bazzite:latest
