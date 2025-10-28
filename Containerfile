@@ -3,7 +3,8 @@ FROM scratch AS ctx
 COPY build_files /
 
 # Base Image
-FROM ghcr.io/ublue-os/silverblue-nvidia:latest
+ARG BASE_IMAGE=ghcr.io/ublue-os/silverblue-nvidia:latest
+FROM ${BASE_IMAGE}
 
 ## Other possible base images include:
 # FROM ghcr.io/ublue-os/bazzite:latest

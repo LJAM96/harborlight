@@ -22,7 +22,6 @@ dnf5 install -y \
     git \
     libldm \
     moby-engine \
-    docker-compose \
     virt-install \
     libvirt-daemon-config-network \
     libvirt-daemon-kvm \
@@ -59,7 +58,7 @@ if [[ -d /ctx/branding ]]; then
     if [[ -d /ctx/branding/usr/lib/systemd/system ]]; then
         for unit in /ctx/branding/usr/lib/systemd/system/*.service; do
             [[ -f "${unit}" ]] || continue
-            if grep -q '^\[Unit\]' "${unit}"; then
+            if grep -q '^\\[Unit\\]' "${unit}"; then
                 cp -a "${unit}" /usr/lib/systemd/system/
             else
                 echo "Skipping invalid systemd unit template: ${unit}" >&2
@@ -69,17 +68,24 @@ if [[ -d /ctx/branding ]]; then
 fi
 
 ### Install Docker Compose plugin (CLI v2)
-
+COMPOSE_VERSION=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r .tag_name)
 mkdir -p /usr/libexec/docker/cli-plugins
-curl -L "https://github.com/docker/compose/releases/download/v2.29.7/docker-compose-linux-x86_64" -o /usr/libexec/docker/cli-plugins/docker-compose
+curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-linux-x86_64" -o /usr/libexec/docker/cli-plugins/docker-compose
+curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-linux-x86_64.sha256" -o /usr/libexec/docker/cli-plugins/docker-compose.sha256
+cd /usr/libexec/docker/cli-plugins
+sha256sum -c docker-compose.sha256
 chmod +x /usr/libexec/docker/cli-plugins/docker-compose
+cd -
 
 ### Install Fluent icon theme system-wide
 
 FLUENT_TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "${FLUENT_TMP_DIR}"' EXIT
 
-git clone --depth 1 https://github.com/vinceliuice/Fluent-icon-theme.git "${FLUENT_TMP_DIR}/Fluent-icon-theme"
+git clone https://github.com/vinceliuice/Fluent-icon-theme.git "${FLUENT_TMP_DIR}/Fluent-icon-theme"
+cd "${FLUENT_TMP_DIR}/Fluent-icon-theme"
+git checkout 20a233d228331283656416355455963995853464
+cd -
 
 # Install all variants into /usr/share/icons so they are available system-wide
 "${FLUENT_TMP_DIR}/Fluent-icon-theme/install.sh" -a -d /usr/share/icons
