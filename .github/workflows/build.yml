@@ -111,7 +111,7 @@ jobs:
         run: sed -i 's|##BASE_IMAGE##|ghcr.io/ublue-os/silverblue-nvidia:latest|' Containerfile
       - name: Replace base image placeholder for arm64
         if: github.ref == 'refs/heads/arm64'
-        run: sed -i 's|##BASE_IMAGE##|quay.io/fedora-ostree-desktops/silverblue:latest|' Containerfile
+        run: sed -i 's|##BASE_IMAGE##|quay.io/fedora-ostree-desktops/silverblue:rawhide|' Containerfile
 
       - name: Build Image
         id: build_image
