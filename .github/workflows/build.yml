@@ -105,6 +105,13 @@ jobs:
           sep-tags: " "
           sep-annotations: " "
 
+      - name: Replace base image placeholder
+        if: github.ref == 'refs/heads/main'
+        run: sed -i 's|##BASE_IMAGE##|ghcr.io/ublue-os/silverblue-nvidia:latest|' Containerfile
+      - name: Replace base image placeholder for arm64
+        if: github.ref == 'refs/heads/arm64'
+        run: sed -i 's|##BASE_IMAGE##|quay.io/fedora-ostree-desktops/silverblue:latest|' Containerfile
+
       - name: Build Image
         id: build_image
         uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2
